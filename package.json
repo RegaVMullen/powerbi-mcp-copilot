@@ -7,6 +7,7 @@
     "test": "node tests/powerbi-api.test.js",
     "test:auth": "node tests/auth.test.js",
     "test:perf": "node tests/performance.test.js",
+    "demo": "node tests/demo-capabilities.js",
     "dev": "docker-compose up -d",
     "dev:stop": "docker-compose down",
     "lint": "eslint . --ignore-pattern=node_modules",
