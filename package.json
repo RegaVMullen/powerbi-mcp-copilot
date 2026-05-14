@@ -9,7 +9,8 @@
     "test:perf": "node tests/performance.test.js",
     "dev": "docker-compose up -d",
     "dev:stop": "docker-compose down",
-    "lint": "eslint ."
+    "lint": "eslint . --ignore-pattern=node_modules",
+    "start": "node src/server.js"
   },
   "keywords": [
     "powerbi",
@@ -21,15 +22,13 @@
   "author": "RegaVMullen",
   "license": "MIT",
   "dependencies": {
-    "@powerbi/mcp-server": "latest",
-    "axios": "^1.6.0",
-    "dotenv": "^16.3.1",
-    "jsonwebtoken": "^9.1.0",
-    "node-cache": "^5.1.2"
+    "axios": "1.6.0",
+    "dotenv": "16.3.1",
+    "jsonwebtoken": "9.0.2",
+    "node-cache": "5.1.2"
   },
   "devDependencies": {
-    "eslint": "^8.50.0",
-    "jest": "^29.7.0",
-    "dotenv-cli": "^7.3.0"
+    "eslint": "8.50.0",
+    "dotenv-cli": "7.3.0"
   }
 }
