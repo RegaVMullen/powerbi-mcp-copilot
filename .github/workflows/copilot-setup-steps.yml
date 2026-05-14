@@ -48,3 +48,7 @@ jobs:
       - name: Run tests
         run: npm test
         continue-on-error: true
+
+      - name: Run capability demo
+        run: npm run demo
+        continue-on-error: true
