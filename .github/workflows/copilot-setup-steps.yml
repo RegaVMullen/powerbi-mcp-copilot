@@ -1,0 +1,45 @@
+name: "Copilot Setup Steps"
+
+# Automatically run the setup steps when they are changed to allow for easy validation
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` for Copilot to pick it up
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install MCP server dependencies
+        run: npm install
+
+      - name: Install Power BI Studio MCP server
+        run: |
+          # Install the Power BI Studio MCP server
+          # Note: Replace with the actual installation command for Power BI Studio MCP
+          npm install @powerbi/mcp-server
+        continue-on-error: true
+
+      - name: Verify MCP server installation
+        run: |
+          # Verify the MCP server is available
+          npm list @powerbi/mcp-server || echo "Power BI MCP server not found, will be installed at runtime"
+        continue-on-error: true

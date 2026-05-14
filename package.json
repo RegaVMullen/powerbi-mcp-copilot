@@ -1,0 +1,20 @@
+{
+  "name": "powerbi-copilot-setup",
+  "version": "1.0.0",
+  "description": "Power BI Studio MCP server configured for Copilot cloud agent",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "powerbi",
+    "mcp",
+    "copilot"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@powerbi/mcp-server": "latest"
+  },
+  "devDependencies": {}
+}
