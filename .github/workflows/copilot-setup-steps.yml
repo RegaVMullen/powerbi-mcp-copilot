@@ -28,18 +28,23 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install MCP server dependencies
-        run: npm install
+      - name: Install project dependencies
+        run: npm ci
 
       - name: Install Power BI Studio MCP server
         run: |
-          # Install the Power BI Studio MCP server
-          # Note: Replace with the actual installation command for Power BI Studio MCP
           npm install @powerbi/mcp-server
         continue-on-error: true
 
-      - name: Verify MCP server installation
+      - name: Install Performance Testing Tools
         run: |
-          # Verify the MCP server is available
-          npm list @powerbi/mcp-server || echo "Power BI MCP server not found, will be installed at runtime"
+          npm install -g autocannon
+        continue-on-error: true
+
+      - name: Verify MCP server installation
+        run: npm list @powerbi/mcp-server || echo "MCP server will be installed at runtime"
+        continue-on-error: true
+
+      - name: Run tests
+        run: npm test
         continue-on-error: true

@@ -1,85 +1,248 @@
 # Power BI Studio MCP Server Configuration for Copilot
 
-This repository demonstrates how to configure the **Power BI Studio MCP server** for the GitHub Copilot cloud agent.
+A comprehensive GitHub Copilot cloud agent setup with **Power BI Studio MCP server**, REST API integration, Docker support, and CI/CD pipeline.
 
-## Setup Overview
+## 🎯 Features
 
-The `copilot-setup-steps.yml` workflow file in `.github/workflows/` configures Copilot's development environment with the Power BI Studio MCP server.
+- **Power BI Integration**: Complete REST API client for Power BI operations
+- **Copilot Setup**: Automated environment configuration via `copilot-setup-steps.yml`
+- **Docker Support**: Containerized development and testing environments
+- **CI/CD Pipeline**: Automated testing, linting, and Docker builds
+- **Authentication**: Secure Azure AD authentication with token management
+- **Performance Testing**: Built-in performance monitoring tools
+- **API Tests**: Comprehensive test suites for authentication, APIs, and performance
 
-## Files Structure
+## 📁 Directory Structure
 
 ```
 .
 ├── .github/
 │   └── workflows/
-│       └── copilot-setup-steps.yml     # Copilot setup configuration
-├── package.json                         # Node.js dependencies
-└── README.md                            # This file
+│       ├── copilot-setup-steps.yml    # Copilot cloud agent configuration
+│       └── ci-cd.yml                   # GitHub Actions CI/CD pipeline
+├── src/
+│   └── powerbi-api.js                  # Power BI REST API client
+├── tests/
+│   ├── auth.test.js                    # Authentication tests
+│   ├── powerbi-api.test.js             # API integration tests
+│   └── performance.test.js             # Performance benchmarks
+├── Dockerfile                          # Production image
+├── Dockerfile.test                     # Testing image
+├── docker-compose.yml                  # Local development stack
+├── package.json                        # Node.js dependencies
+├── .env.example                        # Environment template
+└── README.md                           # This file
 ```
 
-## Configuration Details
+## 🚀 Quick Start
 
-### copilot-setup-steps.yml
+### 1. Local Development with Docker
 
-This workflow:
-1. Checks out your repository
-2. Sets up Node.js 20
-3. Installs project dependencies via npm
-4. Installs the Power BI Studio MCP server package
-5. Verifies the installation
+```bash
+# Copy environment template
+cp .env.example .env
 
-### Environment Variables (GitHub Actions)
+# Edit .env with your Power BI credentials
+nano .env
 
-To configure Power BI authentication for Copilot, add the following to your repository's **Environments** settings:
+# Start development environment
+npm run dev
 
-1. Go to **Settings** → **Environments**
-2. Create or select the **`copilot`** environment
-3. Add these environment variables/secrets:
+# Run tests
+npm test
 
-- `POWERBI_CLIENT_ID` (Secret) - Your Power BI application ID
-- `POWERBI_CLIENT_SECRET` (Secret) - Your Power BI client secret
-- `POWERBI_TENANT_ID` (Variable) - Your Azure AD tenant ID
-- `POWERBI_WORKSPACE_ID` (Variable) - Default Power BI workspace ID (optional)
+# Stop services
+npm run dev:stop
+```
 
-## Next Steps
+### 2. GitHub Setup
 
-1. **Push this to GitHub**: Create a repository and push these files to your default branch
-2. **Configure Power BI Credentials**: Add the environment variables mentioned above to your `copilot` environment
-3. **Run the Workflow**: Go to **Actions** tab and manually run `copilot-setup-steps` to verify it works
-4. **Start Using Copilot**: Copilot will now have access to the Power BI Studio MCP server
+1. **Create a GitHub repository**
+   ```bash
+   git remote add origin https://github.com/RegaVMullen/powerbi-mcp-copilot.git
+   git branch -M main
+   git push -u origin main
+   ```
 
-## Customization
+2. **Configure Environment Variables** in GitHub:
+   - Go to **Settings** → **Environments** → **copilot**
+   - Add secrets:
+     - `POWERBI_CLIENT_ID`
+     - `POWERBI_CLIENT_SECRET`
+   - Add variables:
+     - `POWERBI_TENANT_ID`
+     - `POWERBI_WORKSPACE_ID`
 
-### Adding More Tools/Dependencies
+3. **Verify Setup**:
+   - Go to **Actions** → **Copilot Setup Steps**
+   - Click **Run workflow**
 
-Edit `.github/workflows/copilot-setup-steps.yml` and add additional steps as needed:
+## 🔐 Power BI Authentication
+
+### Getting Credentials
+
+1. Go to [Azure Portal](https://portal.azure.com)
+2. Register an application in **Azure AD**
+3. Create a client secret
+4. Grant Power BI API permissions
+5. Note the Client ID, Client Secret, and Tenant ID
+
+### Environment Variables
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `POWERBI_CLIENT_ID` | Secret | Azure AD application ID |
+| `POWERBI_CLIENT_SECRET` | Secret | Application client secret |
+| `POWERBI_TENANT_ID` | Variable | Azure AD tenant ID |
+| `POWERBI_WORKSPACE_ID` | Variable | Default Power BI workspace ID |
+| `POWERBI_API_VERSION` | Variable | API version (default: v1.0) |
+
+## 🧪 Testing
+
+### Run All Tests
+
+```bash
+npm test
+```
+
+### Run Specific Tests
+
+```bash
+# Authentication tests
+npm run test:auth
+
+# API integration tests
+npm test
+
+# Performance tests
+npm run test:perf
+```
+
+### Test Coverage
+
+- **Authentication**: Azure AD token acquisition and refresh
+- **API Methods**: Workspaces, reports, datasets, refresh operations
+- **Performance**: Response times and concurrent request handling
+
+## 🐳 Docker
+
+### Build Images
+
+```bash
+# Production image
+docker build -t powerbi-mcp:latest .
+
+# Test image
+docker build -f Dockerfile.test -t powerbi-mcp:test .
+```
+
+### Docker Compose
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+## 📊 Power BI API Client
+
+The `PowerBIAPI` class in `src/powerbi-api.js` provides:
+
+```javascript
+const PowerBIAPI = require('./src/powerbi-api');
+
+const api = new PowerBIAPI();
+
+// Get all workspaces
+const workspaces = await api.getWorkspaces();
+
+// Get reports in a workspace
+const reports = await api.getReports(workspaceId);
+
+// Get datasets in a workspace
+const datasets = await api.getDatasets(workspaceId);
+
+// Refresh a dataset
+await api.refreshDataset(workspaceId, datasetId);
+```
+
+## 🔄 CI/CD Pipeline
+
+The `.github/workflows/ci-cd.yml` workflow:
+
+1. **Linting**: Code quality checks
+2. **Authentication Tests**: Verify Power BI credentials
+3. **API Tests**: Test all API endpoints
+4. **Performance Tests**: Benchmark operations
+5. **Docker Build**: Build and cache container image
+
+Triggered on:
+- Push to `main` or `develop`
+- Pull requests to `main` or `develop`
+
+## 🛠️ Customization
+
+### Adding Dependencies
+
+Edit `package.json` and update `copilot-setup-steps.yml`:
 
 ```yaml
-- name: Install additional tool
-  run: npm install some-other-package
+- name: Install custom package
+  run: npm install custom-package
 ```
 
-### Using a Different Node Version
+### Changing Node Version
 
-In `copilot-setup-steps.yml`, change the `node-version` to your required version:
+In `.github/workflows/copilot-setup-steps.yml`:
 
 ```yaml
 - name: Set up Node.js
   uses: actions/setup-node@v4
   with:
-    node-version: "18"  # Change this
+    node-version: "18"  # Change version
 ```
 
-## Troubleshooting
+### Adding More API Methods
 
-If the setup steps fail:
+Extend `src/powerbi-api.js` with additional Power BI API calls:
 
-1. Check the **Actions** tab in your repository for detailed logs
-2. Verify environment variables are set correctly in the `copilot` environment
-3. Ensure all required permissions are granted
-4. Check that `@powerbi/mcp-server` is the correct package name and is available on npm
+```javascript
+async getDatasetRefreshHistory(workspaceId, datasetId) {
+  const token = await this.authenticate();
+  const response = await axios.get(
+    `${this.baseUrl}/myorg/groups/${workspaceId}/datasets/${datasetId}/refreshes`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data.value;
+}
+```
 
-## References
+## 📚 References
 
-- [Customizing Copilot Cloud Agent](https://docs.github.com/copilot/customizing-copilot/customizing-copilot-cloud-agent)
-- [GitHub Actions Workflow Syntax](https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions)
+- [GitHub Copilot Cloud Agent Documentation](https://docs.github.com/copilot/customizing-copilot/customizing-copilot-cloud-agent)
+- [Power BI REST API](https://learn.microsoft.com/en-us/rest/api/power-bi/)
+- [Azure AD Authentication](https://learn.microsoft.com/en-us/azure/active-directory/develop/)
+- [GitHub Actions](https://docs.github.com/actions)
+
+## 🤝 Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Run tests: `npm test`
+4. Submit a pull request
+
+## 📝 License
+
+MIT
+
+## ⚠️ Security
+
+- Never commit `.env` or credentials
+- Use GitHub Secrets for sensitive data
+- Rotate credentials regularly
+- Enable audit logging in Azure AD

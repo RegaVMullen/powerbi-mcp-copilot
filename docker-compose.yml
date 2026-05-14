@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  powerbi-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: powerbi-mcp-server
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - POWERBI_CLIENT_ID=${POWERBI_CLIENT_ID}
+      - POWERBI_CLIENT_SECRET=${POWERBI_CLIENT_SECRET}
+      - POWERBI_TENANT_ID=${POWERBI_TENANT_ID}
+      - POWERBI_WORKSPACE_ID=${POWERBI_WORKSPACE_ID}
+    volumes:
+      - ./src:/app/src
+      - ./certs:/app/certs:ro
+    command: npm start
+    networks:
+      - powerbi-network
+
+  powerbi-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: powerbi-mcp-tests
+    environment:
+      - NODE_ENV=test
+      - POWERBI_CLIENT_ID=${POWERBI_CLIENT_ID}
+      - POWERBI_CLIENT_SECRET=${POWERBI_CLIENT_SECRET}
+      - POWERBI_TENANT_ID=${POWERBI_TENANT_ID}
+    volumes:
+      - ./tests:/app/tests
+    command: npm test
+    networks:
+      - powerbi-network
+    depends_on:
+      - powerbi-mcp
+
+networks:
+  powerbi-network:
+    driver: bridge
